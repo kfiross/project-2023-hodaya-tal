@@ -1,0 +1,69 @@
+/*@tailwind base;*/
+/*@tailwind components;*/
+/*@tailwind utilities;*/
+
+/*:root {*/
+/*  --foreground-rgb: 0, 0, 0;*/
+/*  --background-start-rgb: 214, 219, 220;*/
+/*  --background-end-rgb: 255, 255, 255;*/
+/*}*/
+
+/*@media (prefers-color-scheme: dark) {*/
+/*  :root {*/
+/*    --foreground-rgb: 255, 255, 255;*/
+/*    --background-start-rgb: 0, 0, 0;*/
+/*    --background-end-rgb: 0, 0, 0;*/
+/*  }*/
+/*}*/
+
+/*body {*/
+/*  color: rgb(var(--foreground-rgb));*/
+/*  background: linear-gradient(*/
+/*      to bottom,*/
+/*      transparent,*/
+/*      rgb(var(--background-end-rgb))*/
+/*    )*/
+/*    rgb(var(--background-start-rgb));*/
+/*}*/
+
+body{
+
+}
+
+:root {
+    --fc-button-bg-color: #ffd76b;
+    --fc-button-hover-bg-color: #ffd76b;
+    --fc-button-text-color: #191919;
+    --fc-button-active-bg-color: #FFCB37;
+    --fc-small-font-size: .95em;
+
+}
+
+.fc-event {
+    /*font-size: 17px;*/
+}
+
+.fc-timegrid {
+    margin-left: 10vw;
+    margin-right: 10vw;
+    width: 84vw;
+}
+
+.fc-toolbar{
+    font-size: 12px;
+}
+
+
+.fc-toolbar .fc-button {
+    font-size: 15px;
+}
+
+
+.fc-theme-standard td, .fc-theme-standard th {
+    /*border-top-style: hidden;*/
+}
+
+.fc-toolbar-title{
+    font-size: 11px;
+}
+
