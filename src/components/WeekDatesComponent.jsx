@@ -145,7 +145,7 @@ const WeekDates = ({firstDate, shomrim}) => {
           </IconButton>
         </Box>
 
-        <Typography component="h2" variant="h6">
+        <Typography ariant="body1" >
           {`${startDateString()} - ${endDateString()}`}
         </Typography>
         <IconButton onClick={prevOption}>

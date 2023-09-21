@@ -52,6 +52,7 @@ const Page2 = () => {
     console.log("all good!!")
     return null;
   };
+
   /**
    * @param {FormEvent<HTMLFormElement>} event
    */

@@ -26,6 +26,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import PrefsUtils, {PrefsKeys} from "@/utils/prefsUtils";
+import MyChoicesPage from "@/app/my-choices/page";
+import {CalendarIcon} from "@mui/x-date-pickers";
 
 const Sidebar = (props) => {
   const [active, setActive] = useState('')
@@ -66,9 +68,10 @@ const Sidebar = (props) => {
           <div className="sidebarMenu">
             {/*<h3 className="sidebarTitle">Dashboard</h3>*/}
             <ul className="sidebarList">
-              <SideBarItem name={"המשמרות שלי"} icon={<EventAvailableIcon className="sidebarIcon" />} path={'/page1'} navigateTo={navigateTo}/>
-              <SideBarItem name={"הוספת העדפה למשמרת"} icon={<EditCalendarIcon className="sidebarIcon" />} path={'/page2'} navigateTo={navigateTo}/>
-              <SideBarItem name={"עדכון פרטי עובד"} icon={<TuneIcon className="sidebarIcon" />} path={'/page3'} navigateTo={navigateTo}/>
+              <SideBarItem name={"המשמרות שלי"} icon={<CalendarIcon  className="sidebarIcon" />} path={'/page1'} navigateTo={navigateTo}/>
+              <SideBarItem name={"העדפות למשמרת"} icon={<EventAvailableIcon className="sidebarIcon" />} path={'/my-choices'} navigateTo={navigateTo}/>
+              <SideBarItem name={"הוספת העדפה חדשה"} icon={<EditCalendarIcon className="sidebarIcon" />} path={'/page2'} navigateTo={navigateTo}/>
+              {/*<SideBarItem name={"עדכון פרטי עובד"} icon={<TuneIcon className="sidebarIcon" />} path={'/page3'} navigateTo={navigateTo}/>*/}
             </ul>
           </div>
         }

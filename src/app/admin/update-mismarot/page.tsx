@@ -39,7 +39,7 @@ const Page4 = () => {
         <div>
             <Box sx={{m: 4}}>
 
-                <Typography component="h1" variant="h6" sx={{fontWeight: 'bold'}} >
+                <Typography variant="h6" sx={{fontWeight: 'bold'}} >
                     בחירת עובדים
                 </Typography>
                 <Grid container spacing={0}>
@@ -55,8 +55,9 @@ const Page4 = () => {
                     <Grid item xs={8} md={6} lg={3}>
                         <ChooseWorker counter={4} onChange={(id: number) => setShomer4(id)}/>
                     </Grid>
+                <Box height={"4vh"}/>
                 </Grid>
-                <Typography component="h1" variant="h6" sx={{fontWeight: 'bold'}} >
+                <Typography variant="h6"  sx={{fontWeight: 'bold'}} >
                     בחירת שבוע עבודה
                 </Typography>
                 {/*<OptionsComponent options={options}/>*/}
