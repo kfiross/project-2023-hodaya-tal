@@ -66,12 +66,11 @@ const WeekDates = ({firstDate, shomrim}) => {
       return;
     }
 
-    getShibuzByAlgo(0).then(res => setAlgoResults1(res));
-
-    // setAlgoResults2(getShibuzByAlgo(1))
-    // setAlgoResults3(getShibuzByAlgo(2))
-    // setAlgoResults4(getShibuzByAlgo(3))
-    // setAlgoResults5(getShibuzByAlgo(4))
+    getShibuzByAlgo(0).then(res => setAlgoResults1(res)).catch(() => setAlgoResults1([]));
+    getShibuzByAlgo(1).then(res => setAlgoResults2(res)).catch(() => setAlgoResults2([]));
+    getShibuzByAlgo(2).then(res => setAlgoResults3(res)).catch(() => setAlgoResults3([]));
+    getShibuzByAlgo(3).then(res => setAlgoResults4(res)).catch(() => setAlgoResults4([]));
+    getShibuzByAlgo(4).then(res => setAlgoResults5(res)).catch(() => setAlgoResults5([]));
     setAlgoResultsState('done');
 
   }, [algoResultsState]);
@@ -326,7 +325,7 @@ const WeekDates = ({firstDate, shomrim}) => {
                     {moment(startDate).add(1, 'd').format('DD-MM-YYYY')}
                   </Typography>
                   <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
-                    {prettifyAlgoResults(algoResults1)}
+                    {prettifyAlgoResults(algoResults2)}
                   </Typography>
                 </Stack>
               </Grid>
@@ -337,7 +336,7 @@ const WeekDates = ({firstDate, shomrim}) => {
                     {moment(startDate).add(2, 'd').format('DD-MM-YYYY')}
                   </Typography>
                   <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
-                    {prettifyAlgoResults(algoResults1)}
+                    {prettifyAlgoResults(algoResults3)}
                   </Typography>
                 </Stack>
               </Grid>
@@ -348,7 +347,7 @@ const WeekDates = ({firstDate, shomrim}) => {
                     {moment(startDate).add(3, 'd').format('DD-MM-YYYY')}
                   </Typography>
                   <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
-                    {prettifyAlgoResults(algoResults1)}
+                    {prettifyAlgoResults(algoResults4)}
                   </Typography>
                 </Stack>
               </Grid>
@@ -359,7 +358,7 @@ const WeekDates = ({firstDate, shomrim}) => {
                     {moment(startDate).add(4, 'd').format('DD-MM-YYYY')}
                   </Typography>
                   <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
-                    {prettifyAlgoResults(algoResults1)}
+                    {prettifyAlgoResults(algoResults5)}
                   </Typography>
                 </Stack>
               </Grid>
