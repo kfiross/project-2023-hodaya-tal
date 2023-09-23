@@ -1,11 +1,11 @@
-
-import * as React from 'react';
 import {Box, Typography} from "@mui/material";
-import WorkersTable from "./WorkersTable";
+import WorkersTableGUI from "./WorkersTable";
 import {delay} from "../../../utils/utils";
+import {Suspense} from "react";
+import Loading from "./loading";
 
 async function fetchWorkers() {
-  await delay(1000);
+  await delay(3000);
 
   const jsonData = [
     { id: 120, firstName: 'יוסי',  lastName: 'לוי', beginWork: "1.2.2018" },
@@ -29,23 +29,39 @@ async function fetchWorkers() {
   return jsonData;
 }
 
-const AllWorkersPage = async () => {
+const AllWorkersPageGUI = async () => {
   const rows = await fetchWorkers()
 
   return (
-    <div>
+    <main>
+      <div>
+        <Suspense fallback={<Loading/>}>
+          <WorkersTableGUI rows={rows}/>
+        </Suspense>
+      </div>
+    </main>
+  );
+};
+
+
+const AllWorkersPage = () => {
+  return (
+    <main>
       <div style={{ marginLeft: "10vw", marginTop: 40, height: "80vh", width: '80%', marginRight: "10vw"}}>
-        <Typography component="h1" variant="h5" sx={{fontWeight: 'bold'}} >
+        <Typography variant="h5" sx={{fontWeight: 'bold'}} >
           פרטי עובדים
         </Typography>
         <Box height={"12px"}/>
-        <WorkersTable rows={rows}/>
+        <Suspense fallback={<Loading/>}>
+          <AllWorkersPageGUI/>
+        </Suspense>
       </div>
-    </div>
+    </main>
   );
 };
 
 export default AllWorkersPage;
+
 
 // 5.7 - 52
 // 10.11 - 55

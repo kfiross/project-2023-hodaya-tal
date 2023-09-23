@@ -6,78 +6,81 @@ const Misheret = {
   Night: 4
 }
 
-// Javascript program for stable marriage problem
+// Number of Guards or Mishmarot
+const SIZE = 4;
 
-// Number of Men or Women
-const N = 4;
-
-// This function returns true if woman 'w' prefers man 'm1' over man 'm'
-function wPrefersM1OverM( prefer,  w,  m,  m1)
+// This function returns true if mishmetet 'w' prefers shomer 's1' over shomer 's'
+function mishmeret_Prefered_s1_Over_s( prefer,  m,  s,  s1)
 {
 
-  // Check if w prefers m over her current engagement m1
-  for (var i = 0; i < N; i++)
+  // Check if s prefered to s over her current engagement (s1)
+  for (let i = 0; i < SIZE; i++)
   {
 
-    // If m1 comes before m in list of w, then w prefers her
+    // If s comes AFTER s1 in list of mishmeret w, then w prefers her
     // current engagement, don't do anything
-    if (prefer[w-N][i] == m1){
-      console.log(`Mishmeret ${w-N+1} already matched`)
-      console.log(`Mishmeret ${w-N+1} is staisfied with Shomer ${m1+1}`)
+    if (prefer[m-SIZE][i] === s1){
+      console.log(`Mishmeret ${m-SIZE+1} already taken`)
+      console.log(`Mishmeret ${m-SIZE+1} is taken by Shomer ${s1+1}`)
       return true;
     }
 
-    // If m comes before m1 in w's list, then free her current
-    // engagement and engage her with m
-    if (prefer[w-N][i] == m){
-      console.log(`Mishmeret ${w-N+1} already matched`)
-      console.log(`Mishmeret ${w-N+1} is staisfied with Shomer ${m1+1}`)
+    // If s comes BEFORE s1 in mishmeret w's list, then free her current
+    // engagement and engage her with shomer s
+    if (prefer[m-SIZE][i] === s){
+      console.log(`Mishmeret ${m-SIZE+1} already taken`)
+      console.log(`Mishmeret ${m-SIZE+1} is taken by Shomer ${s1+1}`)
       return false;
     }
   }
 }
 
-// Prints stable matching for N boys and N girls. Boys are numbered as 0 to
-// N-1. Girls are numbered as N to 2N-1.
+
 function calcShibutz(prefer1, prefer2)
 {
 
-  var wPartner = new Array(N);
-  var mFree = new Array(N);
+  let mishPartner = new Array(SIZE);
+  let mFree = new Array(SIZE);
 
-  wPartner.fill(-1);
+  mishPartner.fill(-1);
   mFree.fill(false);
-  var freeCount = N;
+  let freeCount = SIZE;
 
+  let fuck = 0;
 
   while (freeCount > 0)
   {
-    var m;
-    for (m = 0; m < N; m++)
-      if (mFree[m] == false)
+    fuck++;
+    let S;
+    for (S = 0; S < SIZE; S++)
+      if (!mFree[S])
         break;
 
-    console.log('Dealing with Shomer ' + (m+1)+ '\n')
-    for (var i = 0; i < N && mFree[m] == false; i++)
+    console.log('Dealing with Shomer ' + (S+1)+ '\n')
+    if (fuck == 10)
+      break;
+    for (let i = 0; i < SIZE && mFree[S] === false; i++)
     {
-      var w = prefer1[m][i];
-      if (wPartner[w-N] == -1)
+      let M = prefer1[S][i];
+      if (mishPartner[M-SIZE] === -1)
       {
-        wPartner[w-N] = m;
-        mFree[m] = true;
+        mishPartner[M-SIZE] = S;
+        mFree[S] = true;
         freeCount--;
-        console.log(`Shomer ${m+1} is perfect matched with ${w-N+1}\n`)
+        let mishmeret = M-SIZE+1
+
+        console.log(`Shomer ${S+1} is perfect matched to mishmeret ${Object.keys(Misheret)[mishmeret-1]} (${mishmeret})\n`)
       }
 
       else
       {
-        var m1 = wPartner[w-N];
+        let S1 = mishPartner[M-SIZE];
 
-        if (wPrefersM1OverM(prefer2, w, m, m1) == false)
+        if (!mishmeret_Prefered_s1_Over_s(prefer2, M, S, S1))
         {
-          wPartner[w-N] = m;
-          mFree[m] = true;
-          mFree[m1] = false;
+          mishPartner[M-SIZE] = S;
+          mFree[S] = true;
+          mFree[S1] = false;
         }
       }
     }
@@ -87,48 +90,66 @@ function calcShibutz(prefer1, prefer2)
   // for tests
   let pairs = []
   console.log("  Mishmeret \tShomer" +"");
-  for (var i = 0; i < N; i++){
-    console.log("   " + Object.keys(Misheret)[(i+1)] + " \t  " + (wPartner[i]+1) +"");
-    pairs.push([(i+1), (wPartner[i]+1)])
+  for (let i = 0; i < SIZE; i++){
+    console.log("   " + Object.keys(Misheret)[(i)] + " \t  " + (mishPartner[i]+1) +"");
+    pairs.push([(i+1), (mishPartner[i]+1)])
   }
   return pairs
 }
 
 // TEST
 
-// Shomers 0-3
-// Mishmerets 4-7
 
-var shomrim  = [
-  [3, 1, 2, 4],
-  [4, 1, 2, 3],
-  [1, 2, 3, 4],
-  [2, 3, 1, 4],
-];
-
-
-var mishmarot  = [
+const mishmarot = [
   [1, 2, 3, 4],
   [2, 1, 3, 4],
   [3, 4, 2, 1],
   [4, 3, 2, 1],
 ];
 
-for(let i=0; i<N; i++) {
-  for (let j = 0; j < N; j++) {
-    shomrim[i][j] += -1 + 4
-    mishmarot[i][j] -= 1
-  }
-}
-console.log(shomrim)
-console.log(mishmarot)
-let result = calcShibutz(shomrim ,mishmarot);
-console.log(result)
 
+/**
+ *
+ * @param {number[][]} shomrim
+ * @return {*[]}
+ */
+export function run(shomrim) {
+  // for example
+  if (!shomrim) {
+    shomrim = [
+      [3, 1, 2, 4],   // shomer 1 (morning, noon, eve, night)..
+      [4, 1, 2, 3],   // shomer 2
+      [1, 2, 3, 4],   // shomer 3
+      [2, 3, 1, 4],   // shomer 4
+    ];
+  }
+
+
+  // Shomerim get indexes:   0-3 (0 - (N-1))
+  // Mishmerets get indexes: 4-7 (N - (2N-1))
+  for (let i = 0; i < SIZE; i++) {
+    for (let j = 0; j < SIZE; j++) {
+      shomrim[i][j] += -1 + 4
+      mishmarot[i][j] -= 1
+    }
+  }
+
+  let result = calcShibutz(shomrim, mishmarot);
+  console.log(result)
+  return result;
+}
+
+run(
+  [
+    [1, 3, 2, 4],
+    [4, 1, 2, 3],
+    [1, 2, 3, 4],
+    [1, 3, 2, 4],
+  ]
+);
 
 // Shomer 1 -> Mishmeret 2
 // Shomer 3 -> Mishmeret 1
 // Shomer 2 -> Mishmeret 4
 // Shomer 4 -> Mishmeret 3
 
-/// export default calcShibutz;

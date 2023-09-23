@@ -1,6 +1,6 @@
 "use client"
 
-import {Box, Button, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Stack, Typography} from "@mui/material";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
@@ -9,13 +9,7 @@ import React, {useState} from "react";
 import API from "@/api/api";
 import AuthUtils from "@/utils/authUtils";
 import * as moment from "moment/moment";
-
-const Names = {
-  "boker": "משמרת בוקר",
-  "noon": "משמרת צהריים",
-  "eve": "משמרת ערב",
-  "night": "משמרת לילה",
-}
+import {MishmaretName} from '@/constants/app_consts'
 
 
 
@@ -74,6 +68,7 @@ const MyChoicesPage = () => {
             <form onSubmit={onSubmit} ref={(el) => myFormRef = el}>
               <Stack direction="column" width="22vw" minWidth={"320px"}>
                 <LocalizationProvider adapterLocale="he" dateAdapter={AdapterDayjs}>
+
                   <DatePicker
                     format={"DD/MM/YYYY"}
                     label="תאריך"
@@ -110,19 +105,19 @@ const MyChoicesPage = () => {
                   <>
                     <Box height={"3vh"}/>
                     <Typography variant="body1">
-                      <b>{Names.boker}:</b> {`${adifutName(choices['1'])} (${choices['1']})`}
+                      <b>{MishmaretName.boker}:</b> {`${adifutName(choices['1'])} (${choices['1']})`}
                     </Typography>
                     <Box height={"3vh"}/>
                     <Typography variant="body1">
-                      <b>{Names.noon}:</b> {`${adifutName(choices['2'])} (${choices['2']})`}
+                      <b>{MishmaretName.noon}:</b> {`${adifutName(choices['2'])} (${choices['2']})`}
                     </Typography>
                     <Box height={"3vh"}/>
                     <Typography variant="body1">
-                      <b>{Names.eve}:</b> {`${adifutName(choices['3'])} (${choices['3']})`}
+                      <b>{MishmaretName.eve}:</b> {`${adifutName(choices['3'])} (${choices['3']})`}
                     </Typography>
                     <Box height={"3vh"}/>
                     <Typography variant="body1">
-                      <b>{Names.night}:</b> {`${adifutName(choices['4'])} (${choices['4']})`}
+                      <b>{MishmaretName.night}:</b> {`${adifutName(choices['4'])} (${choices['4']})`}
                     </Typography>
                   </>
 

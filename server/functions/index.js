@@ -81,3 +81,14 @@ exports.updateUserData = functions.https.onRequest(async (req, res) => {
   }
   res.json({'success': true})
 });
+
+
+// exports.calcHungrianAlgo = functions.https.onRequest(async (req, res) => {
+//   let params = req.query;
+//
+//   let {result, error} = await createUser(params.uid, params.name)
+//   if (error){
+//     return res.json({'success': false, 'error': error});
+//   }
+//   res.json({'success': true})
+// });

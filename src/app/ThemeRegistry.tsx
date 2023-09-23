@@ -13,9 +13,11 @@ import rtlPlugin from "stylis-plugin-rtl";
 
 const theme = createTheme({
   direction: 'rtl',
-  typography: {
-    fontFamily: 'Rubik',
-  },
+  // typography: {
+  //   allVariants: {
+  //     fontFamily: 'Rubik',
+  //   }
+  // },
   palette: {
     primary: {main: "#FFCB37"},
     secondary: {main: "#000"},

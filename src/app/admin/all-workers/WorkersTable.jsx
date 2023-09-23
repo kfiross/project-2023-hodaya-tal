@@ -2,7 +2,6 @@
 
 import moment from "moment/moment";
 import {DataGrid, heIL} from "@mui/x-data-grid";
-import * as React from "react";
 
 const WorkersTable = ({rows}) =>{
   const columns = [

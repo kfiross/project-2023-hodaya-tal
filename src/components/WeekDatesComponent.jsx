@@ -6,8 +6,28 @@ import API from "../api/api";
 import BasicTable from "@/components/BasicTable";
 import {delay, shuffleArray, transpose} from '@/utils/utils';
 import Grid from "@mui/material/Grid";
-import ChooseWorker from "@/components/ChooseWorker";
+import * as Algo from "@/algo/algo";
+import {MishmaretName} from "@/constants/app_consts";
 
+// TODO: better
+const workers = [
+  { id: 120, firstName: 'יוסי',  lastName: 'לוי', beginWork: "1.2.2018" },
+  { id: 121, firstName: 'כוכבה', lastName: 'כהן', beginWork: "24.10.2020" },
+  { id: 122, firstName: 'שירה',  lastName: 'יחזקאל', beginWork: "28.11.2022" },
+  { id: 123, firstName: 'אביה',  lastName: 'סבג', beginWork: "17.5.2017" },
+  { id: 124, firstName: 'דניאל', lastName: 'מירגן', beginWork: "4.9.2019" },
+  { id: 125, firstName: 'טל',    lastName: 'מצליח', beginWork: " 6.8.2004" },
+  { id: 126, firstName: 'הודיה', lastName: 'וייס', beginWork: "7.12.2021" },
+  { id: 127, firstName: 'מוטי',  lastName: 'שלום', beginWork: "3.9.2016" },
+  { id: 128, firstName: 'ויקי',  lastName: 'אברג’יל', beginWork: "28.2.2015" },
+  { id: 129, firstName: 'ניסים', lastName: 'מסיקה', beginWork: "26.11.2013" },
+  { id: 130, firstName: 'שי',     lastName: 'דואני', beginWork: "24.10.2012" },
+  { id: 131, firstName: 'שירז',   lastName: 'לגזיאל', beginWork: "15.7.2011" },
+  { id: 132, firstName: 'אלעד', lastName: 'מזרחי', beginWork: "9.10.2008" },
+  { id: 133, firstName: 'רפאל', lastName: 'דוד', beginWork: "7.12.2006" },
+  { id: 134, firstName: 'רם', lastName: 'שמואל', beginWork: "18.4.2005" },
+  { id: 135, firstName: 'תומר', lastName: 'אבוטבול', beginWork: "4.3.2007" },
+];
 
 const baseCompanyChoices = [
   {'1': 1, '2': 2, '3': 3, '4': 4},
@@ -28,11 +48,33 @@ const WeekDates = ({firstDate, shomrim}) => {
   const [choices4, setChoices4] = useState(/**@type {Array<Object>} */[]);
   const [choices5, setChoices5] = useState(/**@type {Array<Object>} */[]);
 
+  const [algoResultsState, setAlgoResultsState] = useState('initial');
+  const [algoResults1, setAlgoResults1] = useState(/** @type {number[][]} */[])
+  const [algoResults2, setAlgoResults2] = useState(/** @type {number[][]} */[])
+  const [algoResults3, setAlgoResults3] = useState(/** @type {number[][]} */[])
+  const [algoResults4, setAlgoResults4] = useState(/** @type {number[][]} */[])
+  const [algoResults5, setAlgoResults5] = useState(/** @type {number[][]} */[])
+
 
   useEffect(() => {
     jumpToToday()
   }, []);
 
+
+  useEffect(() => {
+    if(algoResultsState !== 'loading'){
+      return;
+    }
+
+    getShibuzByAlgo(0).then(res => setAlgoResults1(res));
+
+    // setAlgoResults2(getShibuzByAlgo(1))
+    // setAlgoResults3(getShibuzByAlgo(2))
+    // setAlgoResults4(getShibuzByAlgo(3))
+    // setAlgoResults5(getShibuzByAlgo(4))
+    setAlgoResultsState('done');
+
+  }, [algoResultsState]);
 
   useEffect(() => {
     const fromDate = moment(startDate).format('DD/MM/YYYY')
@@ -42,7 +84,7 @@ const WeekDates = ({firstDate, shomrim}) => {
       if(choicesState !== 'loading'){
         return;
       }
-      await delay(2000);
+      await delay(1000);
       const results = [
         [],
         [],
@@ -126,6 +168,48 @@ const WeekDates = ({firstDate, shomrim}) => {
     setStartDate(moment().subtract(days, 'd').toDate());
   }
 
+  const getShibuzByAlgo = async  (index) => {
+    let allDaysChoices = [
+      choices1,
+      // choices2,
+      // choices3,
+      // choices4,
+      // choices5,
+    ];
+
+    let c = allDaysChoices[index]
+
+    console.log("c")
+    console.log(c)
+
+    /** @type {number[][]}*/
+    let matrix = [];
+    for (let i=0; i<4; i++){
+      matrix.push([]);
+      for (let j=1; j<=4; j++) {
+        matrix[i].push(c[i][j])
+      }
+    }
+
+    console.log("matrix")
+    let arrText = "";
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        arrText+=matrix[i][j]+' ';
+      }
+      console.log(arrText);
+      arrText='';
+    }
+
+
+    let date = moment(startDate).add(index, 'days');
+    console.log(`running algo for date ${date.format('DD-MM-YYYY')}..`)
+    await delay(1000);
+    let results = Algo.run(matrix);
+
+    return results
+  }
+
   const showChoices = () => {
     setChoices1([])
     setChoices2([])
@@ -134,6 +218,29 @@ const WeekDates = ({firstDate, shomrim}) => {
     setChoices5([])
     setChoicesState('loading')
     // console.log(shomrim)
+  }
+
+  const showShibutim = () => {
+    setAlgoResults1([])
+    setAlgoResults2([])
+    setAlgoResults3([])
+    setAlgoResults4([])
+    setAlgoResults5([])
+    setAlgoResultsState('loading')
+    // console.log(shomrim)
+  }
+
+  const prettifyAlgoResults = (results) => {
+    let text = ""
+    console.log(results)
+    for(let arr of results){
+      let [mishmeretNumber, shomerIndex] = arr
+      let shomerId = shomrim[shomerIndex-1]
+      let shomer = workers.find(w => w.id == shomerId);
+      let mishmaret = Object.values(MishmaretName)[mishmeretNumber-1]
+      text += `${mishmaret}: ${shomer.firstName} ${shomer.lastName} \n`
+    }
+    return text
   }
 
   return (
@@ -155,9 +262,11 @@ const WeekDates = ({firstDate, shomrim}) => {
         <Box width={8}/>
         <Button variant="contained" onClick={jumpToToday}>היום</Button>
         <Button variant="contained" onClick={showChoices}>הצגת בחירות</Button>
+        <Button variant="contained" onClick={showShibutim}>הצגת שיבוצים</Button>
       </Stack>
       <Box height={12}/>
-      <Stack direction="row" alignItems="center" gap={3}>
+      {/*<Stack direction="row" alignItems="center" gap={3}>*/}
+      <Box>
         {/*<BasicTable choices={baseCompanyChoices} user={"base"}/>*/}
 
         {choicesState === 'loaded' &&
@@ -188,7 +297,113 @@ const WeekDates = ({firstDate, shomrim}) => {
 
 
 
-      </Stack>
+      </Box>
+
+      <Box>
+        {algoResultsState === 'done' &&
+
+          <>
+            <Box height={"3vh"}/>
+            <Typography variant="h6" sx={{fontWeight: 'bold'}} >
+              תוצאות שיבוץ
+            </Typography>
+            <Box height={"3vh"}/>
+            <Grid container spacing={8}>
+              <Grid item >
+                  <Stack direction="column" alignItems="center" gap={3}>
+                    <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
+                      {moment(startDate).add(0, 'd').format('DD-MM-YYYY')}
+                    </Typography>
+                    <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                      {prettifyAlgoResults(algoResults1)}
+                    </Typography>
+                  </Stack>
+              </Grid>
+
+              <Grid item >
+                <Stack direction="column" alignItems="center" gap={3}>
+                  <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
+                    {moment(startDate).add(1, 'd').format('DD-MM-YYYY')}
+                  </Typography>
+                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                    {prettifyAlgoResults(algoResults1)}
+                  </Typography>
+                </Stack>
+              </Grid>
+
+              <Grid item >
+                <Stack direction="column" alignItems="center" gap={3}>
+                  <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
+                    {moment(startDate).add(2, 'd').format('DD-MM-YYYY')}
+                  </Typography>
+                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                    {prettifyAlgoResults(algoResults1)}
+                  </Typography>
+                </Stack>
+              </Grid>
+
+              <Grid item >
+                <Stack direction="column" alignItems="center" gap={3}>
+                  <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
+                    {moment(startDate).add(3, 'd').format('DD-MM-YYYY')}
+                  </Typography>
+                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                    {prettifyAlgoResults(algoResults1)}
+                  </Typography>
+                </Stack>
+              </Grid>
+
+              <Grid item >
+                <Stack direction="column" alignItems="center" gap={3}>
+                  <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
+                    {moment(startDate).add(4, 'd').format('DD-MM-YYYY')}
+                  </Typography>
+                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                    {prettifyAlgoResults(algoResults1)}
+                  </Typography>
+                </Stack>
+              </Grid>
+
+
+
+
+              {/*<Grid item xs={8} md={6} lg={4}>*/}
+              {/*  <Stack direction="column" alignItems="center" gap={3}>*/}
+              {/*    <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >*/}
+              {/*      {moment(startDate).add(1, 'd').format('DD-MM-YYYY')}*/}
+              {/*    </Typography>*/}
+              {/*    {algoResults2}*/}
+              {/*  </Stack>*/}
+              {/*</Grid>*/}
+              {/*<Grid item xs={8} md={6} lg={4}>*/}
+              {/*  <Stack direction="column" alignItems="center" gap={3}>*/}
+              {/*    <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >*/}
+              {/*      {moment(startDate).add(2, 'd').format('DD-MM-YYYY')}*/}
+              {/*    </Typography>*/}
+              {/*    {algoResults3}*/}
+              {/*  </Stack>*/}
+              {/*</Grid>*/}
+              {/*<Grid item xs={8} md={6} lg={4}>*/}
+              {/*  <Stack direction="column" alignItems="center" gap={3}>*/}
+              {/*    <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >*/}
+              {/*      {moment(startDate).add(3, 'd').format('DD-MM-YYYY')}*/}
+              {/*    </Typography>*/}
+              {/*    {algoResults4}*/}
+              {/*  </Stack>*/}
+              {/*</Grid>*/}
+              {/*<Grid item xs={8} md={6} lg={4}>*/}
+              {/*  <Stack direction="column" alignItems="center" gap={3}>*/}
+              {/*    <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >*/}
+              {/*      {moment(startDate).add(4, 'd').format('DD-MM-YYYY')}*/}
+              {/*    </Typography>*/}
+              {/*    {algoResults5}*/}
+              {/*  </Stack>*/}
+              {/*</Grid>*/}
+            </Grid>
+          </>
+        }
+
+      </Box>
 
     </div>
   )
