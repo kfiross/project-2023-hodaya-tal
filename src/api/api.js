@@ -37,20 +37,26 @@ class API {
    */
   static async getShomerShibutzim(userId, fromDate, toDate) {
     let allShibutzim = [];
-    console.log("getShomerShibutzim", `${fromDate}-${toDate}`)
     const startDate = moment(fromDate, "DD/MM/YYYY")
     const endDate = moment(toDate, "DD/MM/YYYY")
 
     const days = endDate.diff(startDate, 'days') - 1;
     let start = startDate.toDate();
-    console.log(days);
+
+    let promises = [];
+
     for (let i = 0; i < days; i++) {
       const dateToCheck = moment(start).add(i, 'd').format("YYYY-MM-DD")
       const [year, month, day] = dateToCheck.split('-');
 
-      console.log({year, month, day})
       const shibutzimRef = ref(rtdb, `shibuzim/${year}/${month}/${day}/${userId}`)
-      const shibutzimSnapshot = await get(shibutzimRef);
+      promises.push(get(shibutzimRef));
+    }
+
+    let resolvers = await Promise.all(promises);
+
+    for (let i = 0; i < days; i++) {
+      const shibutzimSnapshot = resolvers[i]
       const shibutzimVal = shibutzimSnapshot.val();
       let shibutzim = {1: null, 2: null, 3: null, 4: null}
 
@@ -80,11 +86,9 @@ class API {
    */
   static async getShomerShibutz(userId, date) {
 
-    console.log("getShomerShibutz", `${date}`)
     const dateToCheck = moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
     const [year, month, day] = dateToCheck.split('-');
 
-    console.log({year, month, day})
     const shibutzimRef = ref(rtdb, `shibuzim/${year}/${month}/${day}/${userId}`)
     const shibutzimSnapshot = await get(shibutzimRef);
     const shibutzimVal = shibutzimSnapshot.val();

@@ -4,3 +4,7 @@ export const MishmaretName = {
   "eve": "משמרת ערב",
   "night": "משמרת לילה",
 }
+
+export class AppConsts{
+  static app_name = "Project2023";
+}

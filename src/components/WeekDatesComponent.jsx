@@ -9,6 +9,11 @@ import Grid from "@mui/material/Grid";
 import * as Algo from "@/algo/algo";
 import {MishmaretName} from "@/constants/app_consts";
 
+
+const workerVetek = (worker) => {
+  return moment().diff(moment(worker.beginWork, "DD.MM.YYYY"), "Y");
+}
+
 // TODO: better
 const workers = [
   { id: 120, firstName: 'יוסי',  lastName: 'לוי', beginWork: "1.2.2018" },
@@ -66,12 +71,39 @@ const WeekDates = ({firstDate, shomrim}) => {
       return;
     }
 
-    getShibuzByAlgo(0).then(res => setAlgoResults1(res)).catch(() => setAlgoResults1([]));
-    getShibuzByAlgo(1).then(res => setAlgoResults2(res)).catch(() => setAlgoResults2([]));
-    getShibuzByAlgo(2).then(res => setAlgoResults3(res)).catch(() => setAlgoResults3([]));
-    getShibuzByAlgo(3).then(res => setAlgoResults4(res)).catch(() => setAlgoResults4([]));
-    getShibuzByAlgo(4).then(res => setAlgoResults5(res)).catch(() => setAlgoResults5([]));
-    setAlgoResultsState('done');
+    delay(2000).then(() => {
+      let promises = [
+        getShibuzByAlgo(0),
+        getShibuzByAlgo(1),
+        getShibuzByAlgo(2),
+        getShibuzByAlgo(3),
+        getShibuzByAlgo(4),
+      ];
+
+      Promise.all(promises).then(res => {
+        setAlgoResults1(res[0]);
+        setAlgoResults2(res[1]);
+        setAlgoResults3(res[2]);
+        setAlgoResults4(res[3]);
+        setAlgoResults5(res[4]);
+        setAlgoResultsState('done');
+      }).catch((e) => {
+        setAlgoResultsState('done');
+      });
+    });
+
+
+    //
+
+    // delay(2000).then(() => {
+    //   getShibuzByAlgo(0).then(res => setAlgoResults1(res)).catch(() => setAlgoResults1([]));
+    //   getShibuzByAlgo(1).then(res => setAlgoResults2(res)).catch(() => setAlgoResults2([]));
+    //   getShibuzByAlgo(2).then(res => setAlgoResults3(res)).catch(() => setAlgoResults3([]));
+    //   getShibuzByAlgo(3).then(res => setAlgoResults4(res)).catch(() => setAlgoResults4([]));
+    //   getShibuzByAlgo(4).then(res => setAlgoResults5(res)).catch(() => setAlgoResults5([]));
+    //   setAlgoResultsState('done');
+    // });
+
 
   }, [algoResultsState]);
 
@@ -83,7 +115,7 @@ const WeekDates = ({firstDate, shomrim}) => {
       if(choicesState !== 'loading'){
         return;
       }
-      await delay(1000);
+      await delay(700);
       const results = [
         [],
         [],
@@ -92,7 +124,20 @@ const WeekDates = ({firstDate, shomrim}) => {
         [],
       ];
       let k = 0
-      for (let shomerId of shomrim) {
+
+      let chosenShomrimList = shomrim.map((id) => workers.find((w) => w.id === id));
+      chosenShomrimList.sort((w1, w2) => workerVetek(w1) - workerVetek(w2));
+
+
+      console.log("chosenShomrimList")
+      console.log(chosenShomrimList);
+      for (let i=0; i<chosenShomrimList.length; i++){
+        let shomer= chosenShomrimList[i];
+        console.log("Shomer " + (i+1) +": id=" +shomer.id + " vetek=" + workerVetek(shomer))
+      }
+      let shomrimOrdered =  chosenShomrimList.map(w => w.id);
+
+      for (let shomerId of shomrimOrdered) {
 
         // let arr = new Map<number, number>();
 
@@ -105,9 +150,7 @@ const WeekDates = ({firstDate, shomrim}) => {
           results[4][k] = {1 :null, 2: null, 3: null, 4: null}
         }
         else {
-          console.log("shomerId=", shomerId)
           const shibuzimForAllDays = await API.getShomerShibutzim(''+shomerId, fromDate, toDate)
-          console.log(shibuzimForAllDays)
           results[0][k] = shibuzimForAllDays[0]
           results[1][k] = shibuzimForAllDays[1]
           results[2][k] = shibuzimForAllDays[2]
@@ -118,7 +161,6 @@ const WeekDates = ({firstDate, shomrim}) => {
       k++;
       }
 
-      console.log(results)
 
       setChoices1(results[0])
       setChoices2(results[1])
@@ -132,6 +174,7 @@ const WeekDates = ({firstDate, shomrim}) => {
     fetchData()
       // make sure to catch any error
       .catch((e) => {
+        console.error(156)
         console.error(e)
         setChoices1([])
         setChoices2([])
@@ -155,10 +198,14 @@ const WeekDates = ({firstDate, shomrim}) => {
 
   const prevOption = () => {
     setStartDate(moment(startDate).subtract(7, 'days').toDate());
+    setChoicesState("initial");
+    setAlgoResultsState("initial")
   }
 
   const nextOption = () => {
     setStartDate(moment(startDate).add(7, 'days').toDate());
+    setChoicesState("initial");
+    setAlgoResultsState("initial")
   }
 
   const jumpToToday = () => {
@@ -170,43 +217,50 @@ const WeekDates = ({firstDate, shomrim}) => {
   const getShibuzByAlgo = async  (index) => {
     let allDaysChoices = [
       choices1,
-      // choices2,
-      // choices3,
-      // choices4,
-      // choices5,
+      choices2,
+      choices3,
+      choices4,
+      choices5,
     ];
 
-    let c = allDaysChoices[index]
+    let results = [[1,0], [2, 0], [3, 0], [4, 0]];
+    try {
+      let c = allDaysChoices[index]
 
-    console.log("c")
-    console.log(c)
 
-    /** @type {number[][]}*/
-    let matrix = [];
-    for (let i=0; i<4; i++){
-      matrix.push([]);
-      for (let j=1; j<=4; j++) {
-        matrix[i].push(c[i][j])
+
+      /** @type {number[][]}*/
+      let matrix = [];
+      for (let i = 0; i < 4; i++) {
+        matrix.push([]);
+        for (let j = 1; j <= 4; j++) {
+          if(!c[i][j]){
+            return [];
+          }
+          matrix[i].push(c[i][j])
+        }
       }
-    }
 
-    console.log("matrix")
-    let arrText = "";
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        arrText+=matrix[i][j]+' ';
+      console.log("matrix")
+      let arrText = "";
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+          arrText += (matrix[i][j] ?? "?") + ' ';
+        }
+        arrText += '\n';
       }
       console.log(arrText);
-      arrText='';
+
+
+      let date = moment(startDate).add(index, 'days');
+      console.log(`running algo for date ${date.format('DD-MM-YYYY')}..`)
+      await delay(200);
+      results = Algo.run(matrix);
     }
-
-
-    let date = moment(startDate).add(index, 'days');
-    console.log(`running algo for date ${date.format('DD-MM-YYYY')}..`)
-    await delay(1000);
-    let results = Algo.run(matrix);
-
-    return results
+    catch (e){
+      console.log(e);
+    }
+    return results;
   }
 
   const showChoices = () => {
@@ -231,13 +285,20 @@ const WeekDates = ({firstDate, shomrim}) => {
 
   const prettifyAlgoResults = (results) => {
     let text = ""
-    console.log(results)
+  //  console.log(results)
     for(let arr of results){
       let [mishmeretNumber, shomerIndex] = arr
       let shomerId = shomrim[shomerIndex-1]
-      let shomer = workers.find(w => w.id == shomerId);
       let mishmaret = Object.values(MishmaretName)[mishmeretNumber-1]
-      text += `${mishmaret}: ${shomer.firstName} ${shomer.lastName} \n`
+      let shomer = workers.find(w => w.id == shomerId);
+      if (shomer)
+        text += `${mishmaret}: ${shomer.firstName} ${shomer.lastName} \n`
+      else {
+        text += `${mishmaret}: ? \n`
+      }
+    }
+    if (!text){
+      text = "חסר מידע אודות בחירה"
     }
     return text
   }
@@ -258,10 +319,13 @@ const WeekDates = ({firstDate, shomrim}) => {
           <span>{">"}</span>
         </IconButton>
 
-        <Box width={8}/>
-        <Button variant="contained" onClick={jumpToToday}>היום</Button>
-        <Button variant="contained" onClick={showChoices}>הצגת בחירות</Button>
-        <Button variant="contained" onClick={showShibutim}>הצגת שיבוצים</Button>
+
+        <Button variant="contained" onClick={jumpToToday}>שבוע נוכחי</Button>
+        <Button
+          variant="contained"
+          disabled={shomrim.length !== 4}
+          onClick={showChoices}
+        >הצגת בחירות</Button>
       </Stack>
       <Box height={12}/>
       {/*<Stack direction="row" alignItems="center" gap={3}>*/}
@@ -288,6 +352,9 @@ const WeekDates = ({firstDate, shomrim}) => {
               <BasicTable choices={choices5} user={"users"} dateStr={moment(startDate).add(4, 'd').format('DD-MM-YYYY')}/>
             </Grid>
           </Grid>
+          <Box height={"3vh"}/>
+          <Button variant="contained" onClick={showShibutim}>הצגת שיבוצים</Button>
+
         </>
         }
 
@@ -307,57 +374,57 @@ const WeekDates = ({firstDate, shomrim}) => {
               תוצאות שיבוץ
             </Typography>
             <Box height={"3vh"}/>
-            <Grid container spacing={8}>
-              <Grid item >
-                  <Stack direction="column" alignItems="center" gap={3}>
+            <Grid container spacing={4} >
+              <Grid item xs={12} md={4} lg={2}>
+                  <Stack direction="column" alignItems="start" gap={3}>
                     <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
                       {moment(startDate).add(0, 'd').format('DD-MM-YYYY')}
                     </Typography>
-                    <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                    <Typography component="subtitle1"  style={{width: '20vw', whiteSpace: 'pre-line'}}>
                       {prettifyAlgoResults(algoResults1)}
                     </Typography>
                   </Stack>
               </Grid>
 
-              <Grid item >
-                <Stack direction="column" alignItems="center" gap={3}>
+              <Grid item xs={12} md={4} lg={2}>
+                <Stack direction="column" alignItems="start" gap={3}>
                   <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
                     {moment(startDate).add(1, 'd').format('DD-MM-YYYY')}
                   </Typography>
-                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                  <Typography component="subtitle1"  style={{width: '20vw', whiteSpace: 'pre-line'}}>
                     {prettifyAlgoResults(algoResults2)}
                   </Typography>
                 </Stack>
               </Grid>
 
-              <Grid item >
-                <Stack direction="column" alignItems="center" gap={3}>
+              <Grid item  xs={12} md={4} lg={2}>
+                <Stack direction="column" alignItems="start" gap={3}>
                   <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
                     {moment(startDate).add(2, 'd').format('DD-MM-YYYY')}
                   </Typography>
-                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                  <Typography component="subtitle1"  style={{width: '20vw', whiteSpace: 'pre-line'}}>
                     {prettifyAlgoResults(algoResults3)}
                   </Typography>
                 </Stack>
               </Grid>
 
-              <Grid item >
-                <Stack direction="column" alignItems="center" gap={3}>
+              <Grid item  xs={12} md={4} lg={2}>
+                <Stack direction="column" alignItems="start" gap={3}>
                   <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
                     {moment(startDate).add(3, 'd').format('DD-MM-YYYY')}
                   </Typography>
-                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                  <Typography component="subtitle1"  style={{width: '20vw', whiteSpace: 'pre-line'}}>
                     {prettifyAlgoResults(algoResults4)}
                   </Typography>
                 </Stack>
               </Grid>
 
-              <Grid item >
-                <Stack direction="column" alignItems="center" gap={3}>
+              <Grid item  xs={12} md={4} lg={2}>
+                <Stack direction="column" alignItems="start" gap={3}>
                   <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
                     {moment(startDate).add(4, 'd').format('DD-MM-YYYY')}
                   </Typography>
-                  <Typography component="subtitle1"  style={{whiteSpace: 'pre-line'}}>
+                  <Typography component="subtitle1"  style={{width: '20vw', whiteSpace: 'pre-line'}}>
                     {prettifyAlgoResults(algoResults5)}
                   </Typography>
                 </Stack>
@@ -401,6 +468,8 @@ const WeekDates = ({firstDate, shomrim}) => {
             </Grid>
           </>
         }
+
+        {algoResultsState === 'loading' && <CircularProgress/>}
 
       </Box>
 

@@ -25,6 +25,23 @@ const Page4 = () => {
     const [shomer3, setShomer3] = useState(-3);
     const [shomer4, setShomer4] = useState(-4);
 
+    const shomrimChosen = () => {
+        let s = []
+        if(shomer1 > 0){
+            s.push(shomer1);
+        }
+        if(shomer2 > 0){
+            s.push(shomer2);
+        }
+        if(shomer3 > 0){
+            s.push(shomer3);
+        }
+        if(shomer4 > 0){
+            s.push(shomer4);
+        }
+        return s;
+    }
+
     const handleChange = (event: SelectChangeEvent) => {
         setAge(event.target.value);
     };
@@ -61,7 +78,7 @@ const Page4 = () => {
                     בחירת שבוע עבודה
                 </Typography>
                 {/*<OptionsComponent options={options}/>*/}
-                <WeekDates firstDate={new Date()} shomrim={[shomer1, shomer2, shomer3, shomer4]} />
+                <WeekDates firstDate={new Date()} shomrim={shomrimChosen()} />
             </Box>
         </div>
     );

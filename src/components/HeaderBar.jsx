@@ -2,6 +2,7 @@
 
 import React from "react";
 import '../styles/components/topbar.css'
+import {AppConsts} from '@/constants/app_consts';
 // import "./topbar.styles";
 // import { NotificationsNone, Language, Settings } from "@material-ui/icons";
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -15,8 +16,6 @@ import {Box} from "@mui/material";
 function HeaderBar(){
   const pathname = usePathname();
 
-  console.log("pathname", pathname)
-
   return (
     <Box sx={{ boxShadow: 4 }}>
       <div className="topbar">
@@ -24,7 +23,7 @@ function HeaderBar(){
 
           <div className="topLeft">
             {pathname !== "/login" && <AppDrawer/>}
-            <span className="logo">Project2023</span>
+            <span className="logo">{AppConsts.app_name}</span>
           </div>
           <div className="topRight">
             {/*<div className="topbarIconContainer">*/}
