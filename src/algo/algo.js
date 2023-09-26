@@ -103,12 +103,7 @@ function calcShibutz(prefer1, prefer2)
 // TEST
 
 
-const mishmarot = [
-  [1, 2, 3, 4],
-  [2, 1, 3, 4],
-  [3, 4, 2, 1],
-  [4, 3, 2, 1],
-];
+
 
 
 /**
@@ -116,7 +111,15 @@ const mishmarot = [
  * @param {number[][]} shomrim
  * @return {*[]}
  */
-export function run(shomrim) {
+export
+function run(shomrim) {
+  const mishmarot = [
+    [1, 2, 3, 4],
+    [2, 1, 3, 4],
+    [3, 4, 2, 1],
+    [4, 3, 2, 1],
+  ];
+
   // for example
   if (!shomrim) {
     return [[1,0], [2, 0], [3, 0], [4, 0]];
@@ -156,10 +159,10 @@ export function run(shomrim) {
 
 run(
   [
-    [1, 3, 2, 4],
-    [4, 1, 2, 3],
     [1, 2, 3, 4],
-    [1, 3, 2, 4],
+    [1, 2, 3, 4],
+    [1, 3, 4, 2],
+    [1, 2, 3, 4],
   ]
 );
 
