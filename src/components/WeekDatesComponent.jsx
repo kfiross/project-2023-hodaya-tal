@@ -60,6 +60,10 @@ const WeekDates = ({firstDate, shomrim}) => {
   const [algoResults4, setAlgoResults4] = useState(/** @type {number[][]} */[])
   const [algoResults5, setAlgoResults5] = useState(/** @type {number[][]} */[])
 
+  const shomrimByVetek =
+      shomrim.map((id) => workers.find((w) => w.id === id))
+              .sort((w1, w2) => workerVetek(w1) - workerVetek(w2))
+              .map(w => w.id);
 
   useEffect(() => {
     jumpToToday()
@@ -128,9 +132,6 @@ const WeekDates = ({firstDate, shomrim}) => {
       let chosenShomrimList = shomrim.map((id) => workers.find((w) => w.id === id));
       chosenShomrimList.sort((w1, w2) => workerVetek(w1) - workerVetek(w2));
 
-
-      console.log("chosenShomrimList")
-      console.log(chosenShomrimList);
       for (let i=0; i<chosenShomrimList.length; i++){
         let shomer= chosenShomrimList[i];
         console.log("Shomer " + (i+1) +": id=" +shomer.id + " vetek=" + workerVetek(shomer))
@@ -288,7 +289,7 @@ const WeekDates = ({firstDate, shomrim}) => {
   //  console.log(results)
     for(let arr of results){
       let [mishmeretNumber, shomerIndex] = arr
-      let shomerId = shomrim[shomerIndex-1]
+      let shomerId = shomrimByVetek[shomerIndex-1]
       let mishmaret = Object.values(MishmaretName)[mishmeretNumber-1]
       let shomer = workers.find(w => w.id == shomerId);
       if (shomer)
