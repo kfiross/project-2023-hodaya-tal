@@ -286,7 +286,6 @@ const WeekDates = ({firstDate, shomrim}) => {
 
   const prettifyAlgoResults = (results) => {
     let text = ""
-  //  console.log(results)
     for(let arr of results){
       let [mishmeretNumber, shomerIndex] = arr
       let shomerId = shomrimByVetek[shomerIndex-1]
