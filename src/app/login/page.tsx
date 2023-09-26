@@ -42,11 +42,12 @@ const Login = () => {
             setErrMsg('');
             if (inputTaz == 'admin') {
                 PrefsUtils.setString(PrefsKeys.USER_TYPE, 'admin');
+                router.replace('admin/update-mismarot');
             }
             else {
                 PrefsUtils.setString(PrefsKeys.USER_TYPE, 'user');
+                router.replace('my-choices');
             }
-            router.replace('home');
         }
     }
 

@@ -12,6 +12,8 @@ import { usePathname } from "next/navigation";
 import AppDrawer from "./AppDrawer";
 import AuthUtils from "@/utils/authUtils";
 import {Box} from "@mui/material";
+import Image from "next/image";
+import logo from "../../public/project2023summer_logo_only.png"
 
 function HeaderBar(){
   const pathname = usePathname();
@@ -23,6 +25,8 @@ function HeaderBar(){
 
           <div className="topLeft">
             {pathname !== "/login" && <AppDrawer/>}
+            <Image src={logo} width={40} height={40} alt={"project2023"}/>
+            <Box width={12}/>
             <span className="logo">{AppConsts.app_name}</span>
           </div>
           <div className="topRight">

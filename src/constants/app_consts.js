@@ -6,5 +6,5 @@ export const MishmaretName = {
 }
 
 export class AppConsts{
-  static app_name = "Project2023";
+  static app_name = "SecurityAssigning";
 }

@@ -44,7 +44,7 @@
 
   .sidebarListItem.active,
   .sidebarListItem:hover {
-    background-color: rgba(255, 216, 117, 100);
+    background-color: rgba(216, 123, 64, 0.5);
     text-decoration: none;
   }
 
