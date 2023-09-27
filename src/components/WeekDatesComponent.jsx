@@ -1,10 +1,10 @@
-import {Box, Stack, IconButton, Typography, Button, CircularProgress} from "@mui/material";
+import {Box, Button, CircularProgress, IconButton, Stack, Typography} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import * as moment from 'moment'
 import API from "../api/api";
 import BasicTable from "@/components/BasicTable";
-import {delay, shuffleArray, transpose} from '@/utils/utils';
+import {delay} from '@/utils/utils';
 import Grid from "@mui/material/Grid";
 import * as Algo from "@/algo/algo";
 import {MishmaretName} from "@/constants/app_consts";
@@ -84,7 +84,48 @@ const WeekDates = ({firstDate, shomrim}) => {
         getShibuzByAlgo(4),
       ];
 
-      Promise.all(promises).then(res => {
+      Promise.all(promises).then(async (res) => {
+
+        setAlgoResults1(res[0]);
+        setAlgoResults2(res[1]);
+        setAlgoResults3(res[2]);
+        setAlgoResults4(res[3]);
+        setAlgoResults5(res[4]);
+
+        // check hitnagshut
+        const last = 3;
+        const first = 0;
+        for (let dayIndex=0; dayIndex<3; i++){
+          let todayLastShomerOrderID = res[dayIndex][last][1]
+          let nextDayFirstShomerOrderID = res[dayIndex+1][first][1]
+        //   console.log("todayLastShomer", todayLastShomer.id)
+        //   console.log("nextDayFirstShomer", nextDayFirstShomer.id)
+          if (todayLastShomerOrderID === nextDayFirstShomerOrderID){
+            // we need to re run the next day with "-1" to this problematic shomer
+            console.log("problem with: Shomer " + todayLastShomerOrderID)
+            getShibuzByAlgo(dayIndex+1, {shomerId: shomrimByVetek[todayLastShomerOrderID].id})
+                .then(res => {
+                  switch (dayIndex){
+                    case 1:
+                      setAlgoResults2(res[1]);
+                      break;
+
+                    case 2:
+                      setAlgoResults3(res[2]);
+                      break;
+
+                    case 3:
+                      setAlgoResults4(res[3]);
+                      break;
+
+                    case 4:
+                      setAlgoResults5(res[4]);
+                      break;
+                  }
+                })
+          }
+        }
+
         setAlgoResults1(res[0]);
         setAlgoResults2(res[1]);
         setAlgoResults3(res[2]);
@@ -129,14 +170,11 @@ const WeekDates = ({firstDate, shomrim}) => {
       ];
       let k = 0
 
-      let chosenShomrimList = shomrim.map((id) => workers.find((w) => w.id === id));
-      chosenShomrimList.sort((w1, w2) => workerVetek(w1) - workerVetek(w2));
-
-      for (let i=0; i<chosenShomrimList.length; i++){
-        let shomer= chosenShomrimList[i];
+      for (let i=0; i<shomrimByVetek.length; i++){
+        let shomer= shomrimByVetek[i];
         console.log("Shomer " + (i+1) +": id=" +shomer.id + " vetek=" + workerVetek(shomer))
       }
-      let shomrimOrdered =  chosenShomrimList.map(w => w.id);
+      let shomrimOrdered =  shomrimByVetek.map(w => w.id);
 
       for (let shomerId of shomrimOrdered) {
 
@@ -215,7 +253,8 @@ const WeekDates = ({firstDate, shomrim}) => {
     setStartDate(moment().subtract(days, 'd').toDate());
   }
 
-  const getShibuzByAlgo = async  (index) => {
+  const getShibuzByAlgo = async  (index, reduction) => {
+    console.log("reduction", reduction)
     let allDaysChoices = [
       choices1,
       choices2,
@@ -242,6 +281,23 @@ const WeekDates = ({firstDate, shomrim}) => {
         }
       }
 
+
+
+
+      let date = moment(startDate).add(index, 'days');
+      console.log(`running algo for date ${date.format('DD-MM-YYYY')}..`)
+      await delay(200);
+
+      if(reduction != null){
+        let shomer = shomrimByVetek.find(w => w.id === reduction.shomerId)
+        let shomerIndex = shomrimByVetek.indexOf(shomer);
+
+        for(let k=0; k<4; k++){
+          if(matrix[shomerIndex][k] > 0)
+            matrix[shomerIndex][k] -= 1;
+        }
+      }
+
       console.log("matrix")
       let arrText = "";
       for (let i = 0; i < 4; i++) {
@@ -252,10 +308,6 @@ const WeekDates = ({firstDate, shomrim}) => {
       }
       console.log(arrText);
 
-
-      let date = moment(startDate).add(index, 'days');
-      console.log(`running algo for date ${date.format('DD-MM-YYYY')}..`)
-      await delay(200);
       results = Algo.run(matrix);
     }
     catch (e){
@@ -281,6 +333,13 @@ const WeekDates = ({firstDate, shomrim}) => {
     setAlgoResults5([])
     setAlgoResultsState('loading')
     // console.log(shomrim)
+  }
+
+  const shomerInResults = (arr) => {
+    console.log("arr=", arr)
+    let shomerIndex = arr[1]
+    let shomerId = shomrimByVetek.map(w => w.id)[shomerIndex-1]
+    return workers.find(w => w.id == shomerId);
   }
 
   const prettifyAlgoResults = (results) => {
