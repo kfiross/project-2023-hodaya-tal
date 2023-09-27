@@ -95,32 +95,35 @@ const WeekDates = ({firstDate, shomrim}) => {
         return res;
       }).then((res) => {
         // check hitnagshut
+
         console.log("===  Check hitnagshut === ")
+
         setAlgoResultsState('loading');
         delay(1000).then(async ()=> {
           const last = 3;
           const first = 0;
-          for (let dayIndex=0; dayIndex<3; dayIndex ++){
+
+          for (let dayIndex=0; dayIndex<4; dayIndex ++){
             let todayLastShomerOrderID = res[dayIndex][last][1]
             let nextDayFirstShomerOrderID = res[dayIndex+1][first][1]
-            //   console.log("todayLastShomer", todayLastShomer.id)
-            //   console.log("nextDayFirstShomer", nextDayFirstShomer.id)
-            if (todayLastShomerOrderID === nextDayFirstShomerOrderID){
+              console.log("todayLastShomer", todayLastShomerOrderID)
+              console.log("nextDayFirstShomer", nextDayFirstShomerOrderID)
+            if (todayLastShomerOrderID !=0 && todayLastShomerOrderID === nextDayFirstShomerOrderID){
               // we need to re run the next day with "-1" to this problematic shomer
               console.log("problem with: Shomer " + todayLastShomerOrderID)
-              let newRes = await getShibuzByAlgo(dayIndex+1, {shomerId: shomrimByVetek[todayLastShomerOrderID].id})
+              let newRes = await getShibuzByAlgo(dayIndex+1, {shomerId: shomrimByVetek[todayLastShomerOrderID-1].id})
               res[dayIndex+1] = newRes;
 
               console.log("updated day:", moment(startDate).add(dayIndex+1, "days").format('DD/MM/YYYY'))
             }
 
-            setAlgoResults1(res[0]);
-            setAlgoResults2(res[1]);
-            setAlgoResults3(res[2]);
-            setAlgoResults4(res[3]);
-            setAlgoResults5(res[4]);
-            setAlgoResultsState('done');
           }
+          setAlgoResults1(res[0]);
+          setAlgoResults2(res[1]);
+          setAlgoResults3(res[2]);
+          setAlgoResults4(res[3]);
+          setAlgoResults5(res[4]);
+          setAlgoResultsState('done');
         })
 
       }).catch((e) => {
@@ -260,23 +263,12 @@ const WeekDates = ({firstDate, shomrim}) => {
 
 
 
+      console.log("original");
+      console.log(c);
       /** @type {number[][]}*/
-      let matrix = [];
-      for (let i = 0; i < 4; i++) {
-        matrix.push([]);
-        for (let j = 1; j <= 4; j++) {
-          if(!c[i][j]){
-            return [];
-          }
-          matrix[i].push(c[i][j])
-        }
-      }
-
-
 
 
       let date = moment(startDate).add(index, 'days');
-      console.log(`running algo for date ${date.format('DD-MM-YYYY')}..`)
       await delay(200);
 
       if(reduction != null){
@@ -284,8 +276,29 @@ const WeekDates = ({firstDate, shomrim}) => {
         let shomerIndex = shomrimByVetek.indexOf(shomer);
         console.log(`running algo for date ${date.format('DD-MM-YYYY')} with reduction for ${shomer.id}..`)
 
-        matrix[shomerIndex-1][0] ++;
+        console.log(shomerIndex);
+        c[shomerIndex]['1'] = 4;
+        c[shomerIndex]['2']--;
+        c[shomerIndex]['3']--;
+        c[shomerIndex]['4']--;
       }
+      else{
+        console.log(`running algo for date ${date.format('DD-MM-YYYY')}..`)
+      }
+
+      let matrix = [];
+      for (let i = 0; i < 4; i++) {
+        matrix.push([]);
+        console.log(c[i])
+        matrix[i].push(parseInt(Object.entries(c[i]).find(entry => entry[1] === 1)[0]))
+        matrix[i].push(parseInt(Object.entries(c[i]).find(entry => entry[1] === 2)[0]))
+        matrix[i].push(parseInt(Object.entries(c[i]).find(entry => entry[1] === 3)[0]))
+        matrix[i].push(parseInt(Object.entries(c[i]).find(entry => entry[1] === 4)[0]))
+      }
+
+
+
+
 
       console.log("matrix")
       let arrText = "";

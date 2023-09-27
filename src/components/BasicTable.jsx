@@ -13,7 +13,7 @@ import {Box, Typography} from "@mui/material";
 
 const BasicTable = ({choices, user, dateStr, shomrim}) => {
   return (
-    <Box width={380}>
+    <Box width={390}>
       <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
         {dateStr}
       </Typography>
@@ -21,6 +21,7 @@ const BasicTable = ({choices, user, dateStr, shomrim}) => {
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{"משמרת"}</TableCell>
               <TableCell sx={{fontWeight: 'bold'}} align="center">{shomrim[0].firstName} {shomrim[0].lastName}</TableCell>
               <TableCell sx={{fontWeight: 'bold'}} align="center">{shomrim[1].firstName} {shomrim[1].lastName}</TableCell>
               <TableCell sx={{fontWeight: 'bold'}} align="center">{shomrim[2].firstName} {shomrim[2].lastName}</TableCell>
@@ -32,7 +33,7 @@ const BasicTable = ({choices, user, dateStr, shomrim}) => {
               key={`row1-${user}`}
               sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
-
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{"בוקר"}</TableCell>
               <TableCell align="center">{choices[0]['1'] || '?' }</TableCell>
               <TableCell align="center">{choices[1]['1'] || '?' }</TableCell>
               <TableCell align="center">{choices[2]['1'] || '?' }</TableCell>
@@ -44,6 +45,7 @@ const BasicTable = ({choices, user, dateStr, shomrim}) => {
               sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
 
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{"צהריים"}</TableCell>
               <TableCell align="center">{choices[0]['2'] || '?' }</TableCell>
               <TableCell align="center">{choices[1]['2'] || '?' }</TableCell>
               <TableCell align="center">{choices[2]['2'] || '?' }</TableCell>
@@ -55,6 +57,7 @@ const BasicTable = ({choices, user, dateStr, shomrim}) => {
               sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
 
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{"ערב"}</TableCell>
               <TableCell align="center">{choices[0]['3'] || '?' }</TableCell>
               <TableCell align="center">{choices[1]['3'] || '?' }</TableCell>
               <TableCell align="center">{choices[2]['3'] || '?' }</TableCell>
@@ -65,7 +68,7 @@ const BasicTable = ({choices, user, dateStr, shomrim}) => {
               key={`row4-${user}`}
               sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
-
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{"לילה"}</TableCell>
               <TableCell align="center">{choices[0]['4'] || '?' }</TableCell>
               <TableCell align="center">{choices[1]['4'] || '?' }</TableCell>
               <TableCell align="center">{choices[2]['4'] || '?' }</TableCell>

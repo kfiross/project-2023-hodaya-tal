@@ -66,6 +66,7 @@ class API {
 
 
       if (Array.isArray(shibutzimVal)){
+        console.log(shibutzimVal);
         for(let x of shibutzimVal){
             shibutzim[`${shibutzimVal.indexOf(x)}`] = x
         }

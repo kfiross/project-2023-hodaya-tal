@@ -19,15 +19,15 @@ function mishmeret_Prefered_s1_Over_s( prefer,  m,  s,  s1)
 
     // If s comes AFTER s1 in list of mishmeret w, then w prefers her
     // current engagement, don't do anything
-    if (prefer[m-SIZE][i] === s1){
+    if (prefer[m-SIZE][i] === s){
       console.log(`Mishmeret ${m-SIZE+1} already taken`)
-      console.log(`Mishmeret ${m-SIZE+1} is taken by Shomer ${s1+1}`)
+      console.log(`Mishmeret ${m-SIZE+1} is taken by Shomer ${s}`)
       return true;
     }
 
     // If s comes BEFORE s1 in mishmeret w's list, then free her current
     // engagement and engage her with shomer s
-    if (prefer[m-SIZE][i] === s){
+    if (prefer[m-SIZE][i] === s1){
       console.log(`Mishmeret ${m-SIZE+1} already taken`)
       console.log(`Mishmeret ${m-SIZE+1} is taken by Shomer ${s1+1}`)
       return false;
@@ -159,10 +159,15 @@ function run(shomrim) {
 
 // run(
 //   [
-//     [2, 1, 4, 3],   // SHI
-//     [3, 4, 1, 2],   // NISIM
-//     [4, 3, 2, 1],   // VIKI
-//     [1, 2, 3, 4],   // MOTTI
+//     // [2, 1, 4, 3],   // SHI
+//     // [3, 4, 1, 2],   // NISIM
+//     // [4, 3, 2, 1],   // VIKI
+//     // [1, 2, 3, 4],   // MOTTI
+//
+//     [4, 3, 2, 1 ],
+//     [1 ,2 ,3 ,4 ],
+//     [2 ,1 ,4 ,3 ],
+//     [3 ,4 ,1 ,2 ],
 //   ]
 // );
 
