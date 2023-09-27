@@ -11,9 +11,9 @@ import {Box, Typography} from "@mui/material";
 // import {transpose} from '@/utils/utils';
 
 
-const BasicTable = ({choices, user, dateStr}) => {
+const BasicTable = ({choices, user, dateStr, shomrim}) => {
   return (
-    <Box width={350}>
+    <Box width={380}>
       <Typography component="subtitle1" sx={{fontWeight: 'bold'}} >
         {dateStr}
       </Typography>
@@ -21,10 +21,10 @@ const BasicTable = ({choices, user, dateStr}) => {
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{fontWeight: 'bold'}} align="center">שומר 1</TableCell>
-              <TableCell sx={{fontWeight: 'bold'}} align="center">שומר 2</TableCell>
-              <TableCell sx={{fontWeight: 'bold'}} align="center">שומר 3</TableCell>
-              <TableCell sx={{fontWeight: 'bold'}} align="center">שומר 4</TableCell>
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{shomrim[0].firstName} {shomrim[0].lastName}</TableCell>
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{shomrim[1].firstName} {shomrim[1].lastName}</TableCell>
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{shomrim[2].firstName} {shomrim[2].lastName}</TableCell>
+              <TableCell sx={{fontWeight: 'bold'}} align="center">{shomrim[3].firstName} {shomrim[3].lastName}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

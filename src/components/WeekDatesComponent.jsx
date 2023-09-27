@@ -63,7 +63,7 @@ const WeekDates = ({firstDate, shomrim}) => {
   const shomrimByVetek =
       shomrim.map((id) => workers.find((w) => w.id === id))
               .sort((w1, w2) => workerVetek(w2) - workerVetek(w1))
-              .map(w => w.id);
+
 
   useEffect(() => {
     jumpToToday()
@@ -271,7 +271,6 @@ const WeekDates = ({firstDate, shomrim}) => {
     setChoices4([])
     setChoices5([])
     setChoicesState('loading')
-    // console.log(shomrim)
   }
 
   const showShibutim = () => {
@@ -288,7 +287,7 @@ const WeekDates = ({firstDate, shomrim}) => {
     let text = ""
     for(let arr of results){
       let [mishmeretNumber, shomerIndex] = arr
-      let shomerId = shomrimByVetek[shomerIndex-1]
+      let shomerId = shomrimByVetek.map(w => w.id)[shomerIndex-1]
       let mishmaret = Object.values(MishmaretName)[mishmeretNumber-1]
       let shomer = workers.find(w => w.id == shomerId);
       if (shomer)
@@ -337,19 +336,19 @@ const WeekDates = ({firstDate, shomrim}) => {
         <>
           <Grid container spacing={8}>
             <Grid item xs={8} md={6} lg={4}>
-              <BasicTable choices={choices1} user={"users"} dateStr={moment(startDate).format('DD-MM-YYYY')}/>
+              <BasicTable choices={choices1} shomrim={shomrimByVetek} user={"users"} dateStr={moment(startDate).format('DD-MM-YYYY')}/>
             </Grid>
             <Grid item xs={8} md={6} lg={4}>
-              <BasicTable choices={choices2} user={"users"} dateStr={moment(moment(startDate).toDate()).add(1, 'd').format('DD-MM-YYYY')}/>
+              <BasicTable choices={choices2} shomrim={shomrimByVetek}  user={"users"} dateStr={moment(moment(startDate).toDate()).add(1, 'd').format('DD-MM-YYYY')}/>
             </Grid>
             <Grid item xs={8} md={6} lg={4}>
-              <BasicTable choices={choices3} user={"users"} dateStr={moment(startDate).add(2, 'd').format('DD-MM-YYYY')}/>
+              <BasicTable choices={choices3} shomrim={shomrimByVetek}  user={"users"} dateStr={moment(startDate).add(2, 'd').format('DD-MM-YYYY')}/>
             </Grid>
             <Grid item xs={8} md={6} lg={4}>
-              <BasicTable choices={choices4} user={"users"} dateStr={moment(startDate).add(3, 'd').format('DD-MM-YYYY')}/>
+              <BasicTable choices={choices4} shomrim={shomrimByVetek}  user={"users"} dateStr={moment(startDate).add(3, 'd').format('DD-MM-YYYY')}/>
             </Grid>
             <Grid item xs={8} md={6} lg={4}>
-              <BasicTable choices={choices5} user={"users"} dateStr={moment(startDate).add(4, 'd').format('DD-MM-YYYY')}/>
+              <BasicTable choices={choices5} shomrim={shomrimByVetek}  user={"users"} dateStr={moment(startDate).add(4, 'd').format('DD-MM-YYYY')}/>
             </Grid>
           </Grid>
           <Box height={"3vh"}/>
