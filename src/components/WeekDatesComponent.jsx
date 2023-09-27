@@ -84,57 +84,48 @@ const WeekDates = ({firstDate, shomrim}) => {
         getShibuzByAlgo(4),
       ];
 
-      Promise.all(promises).then(async (res) => {
+      Promise.all(promises).then((res) => {
 
-        setAlgoResults1(res[0]);
-        setAlgoResults2(res[1]);
-        setAlgoResults3(res[2]);
-        setAlgoResults4(res[3]);
-        setAlgoResults5(res[4]);
+        console.log("=== FINISHED  TO RUN ON ALL DAYS === ")
 
+
+
+        setAlgoResultsState('done');
+
+        return res;
+      }).then((res) => {
         // check hitnagshut
-        const last = 3;
-        const first = 0;
-        for (let dayIndex=0; dayIndex<3; i++){
-          let todayLastShomerOrderID = res[dayIndex][last][1]
-          let nextDayFirstShomerOrderID = res[dayIndex+1][first][1]
-        //   console.log("todayLastShomer", todayLastShomer.id)
-        //   console.log("nextDayFirstShomer", nextDayFirstShomer.id)
-          if (todayLastShomerOrderID === nextDayFirstShomerOrderID){
-            // we need to re run the next day with "-1" to this problematic shomer
-            console.log("problem with: Shomer " + todayLastShomerOrderID)
-            getShibuzByAlgo(dayIndex+1, {shomerId: shomrimByVetek[todayLastShomerOrderID].id})
-                .then(res => {
-                  switch (dayIndex){
-                    case 1:
-                      setAlgoResults2(res[1]);
-                      break;
+        console.log("===  Check hitnagshut === ")
+        setAlgoResultsState('loading');
+        delay(1000).then(async ()=> {
+          const last = 3;
+          const first = 0;
+          for (let dayIndex=0; dayIndex<3; dayIndex ++){
+            let todayLastShomerOrderID = res[dayIndex][last][1]
+            let nextDayFirstShomerOrderID = res[dayIndex+1][first][1]
+            //   console.log("todayLastShomer", todayLastShomer.id)
+            //   console.log("nextDayFirstShomer", nextDayFirstShomer.id)
+            if (todayLastShomerOrderID === nextDayFirstShomerOrderID){
+              // we need to re run the next day with "-1" to this problematic shomer
+              console.log("problem with: Shomer " + todayLastShomerOrderID)
+              let newRes = await getShibuzByAlgo(dayIndex+1, {shomerId: shomrimByVetek[todayLastShomerOrderID].id})
+              res[dayIndex+1] = newRes;
 
-                    case 2:
-                      setAlgoResults3(res[2]);
-                      break;
+              console.log("updated day:", moment(startDate).add(dayIndex+1, "days").format('DD/MM/YYYY'))
+            }
 
-                    case 3:
-                      setAlgoResults4(res[3]);
-                      break;
-
-                    case 4:
-                      setAlgoResults5(res[4]);
-                      break;
-                  }
-                })
+            setAlgoResults1(res[0]);
+            setAlgoResults2(res[1]);
+            setAlgoResults3(res[2]);
+            setAlgoResults4(res[3]);
+            setAlgoResults5(res[4]);
+            setAlgoResultsState('done');
           }
-        }
+        })
 
-        setAlgoResults1(res[0]);
-        setAlgoResults2(res[1]);
-        setAlgoResults3(res[2]);
-        setAlgoResults4(res[3]);
-        setAlgoResults5(res[4]);
-        setAlgoResultsState('done');
       }).catch((e) => {
-        setAlgoResultsState('done');
-      });
+            setAlgoResultsState('done');
+          })
     });
 
 
@@ -291,11 +282,9 @@ const WeekDates = ({firstDate, shomrim}) => {
       if(reduction != null){
         let shomer = shomrimByVetek.find(w => w.id === reduction.shomerId)
         let shomerIndex = shomrimByVetek.indexOf(shomer);
+        console.log(`running algo for date ${date.format('DD-MM-YYYY')} with reduction for ${shomer.id}..`)
 
-        for(let k=0; k<4; k++){
-          if(matrix[shomerIndex][k] > 0)
-            matrix[shomerIndex][k] -= 1;
-        }
+        matrix[shomerIndex-1][0] ++;
       }
 
       console.log("matrix")
@@ -335,12 +324,12 @@ const WeekDates = ({firstDate, shomrim}) => {
     // console.log(shomrim)
   }
 
-  const shomerInResults = (arr) => {
-    console.log("arr=", arr)
-    let shomerIndex = arr[1]
-    let shomerId = shomrimByVetek.map(w => w.id)[shomerIndex-1]
-    return workers.find(w => w.id == shomerId);
-  }
+  // const shomerInResults = (arr) => {
+  //   console.log("arr=", arr)
+  //   let shomerIndex = arr[1]
+  //   let shomerId = shomrimByVetek.map(w => w.id)[shomerIndex-1]
+  //   return workers.find(w => w.id == shomerId);
+  // }
 
   const prettifyAlgoResults = (results) => {
     let text = ""
