@@ -62,7 +62,7 @@ const WeekDates = ({firstDate, shomrim}) => {
 
   const shomrimByVetek =
       shomrim.map((id) => workers.find((w) => w.id === id))
-              .sort((w1, w2) => workerVetek(w1) - workerVetek(w2))
+              .sort((w1, w2) => workerVetek(w2) - workerVetek(w1))
               .map(w => w.id);
 
   useEffect(() => {
